@@ -2831,6 +2831,13 @@ pref("browser.tabs.remote.tabCacheSize", 0);
 pref("browser.tabs.remote.warmup.maxTabs", 3);
 pref("browser.tabs.remote.warmup.unloadDelayMs", 2000);
 
+pref("browser.netto.tabbar.visible", false);
+pref("browser.netto.defaultPaneRatio", 50);
+pref("browser.netto.animations.enabled", true);
+pref("browser.netto.pane.focusedOutlineColor", "");
+pref("browser.netto.pane.inactiveOutlineColor", "");
+pref("browser.netto.scrolling.log", false);
+
 // For the about:tabcrashed page
 pref("browser.tabs.crashReporting.sendReport", true);
 pref("browser.tabs.crashReporting.includeURL", false);
@@ -3793,3 +3800,5 @@ pref("distribution.mozillaonline.ignore", true);
 #ifdef XP_MACOSX
   pref("browser.macAppMenu.setAsDefaultShown", false);
 #endif
+
+#include netto-betterfox.js

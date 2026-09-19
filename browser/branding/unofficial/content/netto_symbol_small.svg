@@ -1,0 +1,87 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="180" height="180" viewBox="0 0 180 180" fill="none">
+  <title>netto. sakura symbol — gradient + glow v30 small</title>
+  <desc>Three filled petals use subtle angled center-to-outside gradients. The bottom-right outline petal uses the same center-to-outside gradient family as the filled leaves and receives a soft glow.</desc>
+  <defs>
+    <path id="petal-base" d="
+      M 165 11
+      L 161 49
+      C 159 66, 146 78, 128 82
+      L 94 82
+      L 94 55
+      C 94 38, 106 25, 124 19
+      C 138 15, 152 13, 165 11
+      Z"/>
+
+    <!-- Filled-petal gradient: darker at the center-facing edge, lighter toward the outside.
+         The vector is deliberately a few degrees off the petal's principal axis. -->
+    <linearGradient id="petal-grad" gradientUnits="userSpaceOnUse"
+                    x1="99" y1="78" x2="163" y2="18">
+      <stop offset="0" stop-color="#7FAD6E"/>
+      <stop offset="0.28" stop-color="#94BE83"/>
+      <stop offset="0.56" stop-color="#A6D191"/>
+      <stop offset="0.80" stop-color="#B1D89E"/>
+      <stop offset="1" stop-color="#BBDEA8"/>
+    </linearGradient>
+
+
+    <!-- Same palette/ramp as the filled leaves, vertically reflected for the bottom-right petal. -->
+    <linearGradient id="petal-grad-bottom-right" gradientUnits="userSpaceOnUse"
+                    x1="99" y1="99" x2="163" y2="159">
+      <stop offset="0" stop-color="#AEDB9D"/>
+      <stop offset="0.28" stop-color="#B5E3A3"/>
+      <stop offset="0.56" stop-color="#BFEAAA"/>
+      <stop offset="0.80" stop-color="#C8F0B3"/>
+      <stop offset="1" stop-color="#D1F5BC"/>
+    </linearGradient>
+
+    <!-- Soft luminosity around the customized outline petal only. -->
+    <filter id="custom-leaf-glow" x="72" y="72" width="121" height="121"
+            filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feGaussianBlur stdDeviation="4.2"/>
+    </filter>
+
+    <!-- Exact vertical reflection of the top-right petal. -->
+    <path id="bottom-right-petal" d="
+      M 165 166
+      L 161 128
+      C 159 111, 146 99, 128 95
+      L 94 95
+      L 94 122
+      C 94 139, 106 152, 124 158
+      C 138 162, 152 164, 165 166
+      Z"/>
+    <clipPath id="bottom-right-inset-clip">
+      <use href="#bottom-right-petal"/>
+    </clipPath>
+  </defs>
+
+  <!-- top-right: light outside, dark toward symbol center -->
+  <use href="#petal-base" fill="url(#petal-grad)"/>
+
+  <!-- top-left: same gradient mirrored with the petal geometry -->
+  <use href="#petal-base" fill="url(#petal-grad)" transform="translate(175 0) scale(-1 1)"/>
+
+  <!-- bottom-left: same base color and gradient as the other filled petals -->
+  <use href="#petal-base" fill="url(#petal-grad)" transform="translate(175 177) scale(-1 -1)"/>
+
+  <!-- bottom-right: exact vertical flip, with the visible outline inset into the shape -->
+  <!-- glow stays outside/around the contour -->
+  <use href="#bottom-right-petal"
+       fill="none"
+       stroke="url(#petal-grad-bottom-right)"
+       stroke-width="5.4"
+       stroke-linecap="round"
+       stroke-linejoin="round"
+       opacity="0.18"
+       filter="url(#custom-leaf-glow)"/>
+
+  <!-- SVG strokes are normally centered on the path. Doubling the stroke and clipping
+       it to the petal makes the visible 7.0-unit outline sit entirely inside the silhouette. -->
+  <use href="#bottom-right-petal"
+       fill="none"
+       stroke="url(#petal-grad-bottom-right)"
+       stroke-width="14.0"
+       stroke-linecap="round"
+       stroke-linejoin="round"
+       clip-path="url(#bottom-right-inset-clip)"/>
+</svg>

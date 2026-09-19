@@ -3968,6 +3968,18 @@ export class Tabbrowser {
       throw new Error("Cannot create split view with zero tabs");
     }
 
+    if (
+      !this.dispatchEvent(
+        new CustomEvent("TabSplitViewBeforeCreate", {
+          bubbles: true,
+          cancelable: true,
+          detail: { tabs, id, insertBefore, trigger },
+        })
+      )
+    ) {
+      return null;
+    }
+
     // Capture group information before tabs are moved
     let tabGroupInfo = null;
     if (trigger && tabs.length >= 2) {

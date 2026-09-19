@@ -1,0 +1,92 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="210" viewBox="0 0 600 210" fill="none">
+  <title>netto. sakura logo — gradient + glow v30</title>
+  <desc>Primary netto. lockup with angled petal gradients and a glowing customized outline leaf.</desc>
+  <defs>
+    <path id="petal-base" d="
+      M 165 11
+      L 161 49
+      C 159 66, 146 78, 128 82
+      L 94 82
+      L 94 55
+      C 94 38, 106 25, 124 19
+      C 138 15, 152 13, 165 11
+      Z"/>
+
+    <!-- Filled-petal gradient: darker at the center-facing edge, lighter toward the outside.
+         The vector is deliberately a few degrees off the petal's principal axis. -->
+    <linearGradient id="petal-grad" gradientUnits="userSpaceOnUse"
+                    x1="99" y1="78" x2="163" y2="18">
+      <stop offset="0" stop-color="#7FAD6E"/>
+      <stop offset="0.28" stop-color="#94BE83"/>
+      <stop offset="0.56" stop-color="#A6D191"/>
+      <stop offset="0.80" stop-color="#B1D89E"/>
+      <stop offset="1" stop-color="#BBDEA8"/>
+    </linearGradient>
+
+
+    <!-- Same palette/ramp as the filled leaves, vertically reflected for the bottom-right petal. -->
+    <linearGradient id="petal-grad-bottom-right" gradientUnits="userSpaceOnUse"
+                    x1="99" y1="99" x2="163" y2="159">
+      <stop offset="0" stop-color="#AEDB9D"/>
+      <stop offset="0.28" stop-color="#B5E3A3"/>
+      <stop offset="0.56" stop-color="#BFEAAA"/>
+      <stop offset="0.80" stop-color="#C8F0B3"/>
+      <stop offset="1" stop-color="#D1F5BC"/>
+    </linearGradient>
+
+    <!-- Soft luminosity around the customized outline petal only. -->
+    <filter id="custom-leaf-glow" x="72" y="72" width="121" height="121"
+            filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feGaussianBlur stdDeviation="4.2"/>
+    </filter>
+
+    <!-- Exact vertical reflection of the top-right petal. -->
+    <path id="bottom-right-petal" d="
+      M 165 166
+      L 161 128
+      C 159 111, 146 99, 128 95
+      L 94 95
+      L 94 122
+      C 94 139, 106 152, 124 158
+      C 138 162, 152 164, 165 166
+      Z"/>
+    <clipPath id="bottom-right-inset-clip">
+      <use href="#bottom-right-petal"/>
+    </clipPath>
+  </defs>
+  <g transform="translate(7 12) scale(.95)">
+
+  <!-- top-right: light outside, dark toward symbol center -->
+  <use href="#petal-base" fill="url(#petal-grad)"/>
+
+  <!-- top-left: same gradient mirrored with the petal geometry -->
+  <use href="#petal-base" fill="url(#petal-grad)" transform="translate(175 0) scale(-1 1)"/>
+
+  <!-- bottom-left: same base color and gradient as the other filled petals -->
+  <use href="#petal-base" fill="url(#petal-grad)" transform="translate(175 177) scale(-1 -1)"/>
+
+  <!-- bottom-right: exact vertical flip, with the visible outline inset into the shape -->
+  <!-- glow stays outside/around the contour -->
+  <use href="#bottom-right-petal"
+       fill="none"
+       stroke="url(#petal-grad-bottom-right)"
+       stroke-width="5.4"
+       stroke-linecap="round"
+       stroke-linejoin="round"
+       opacity="0.18"
+       filter="url(#custom-leaf-glow)"/>
+
+  <!-- SVG strokes are normally centered on the path. Doubling the stroke and clipping
+       it to the petal makes the visible 4.0-unit outline sit entirely inside the silhouette. -->
+  <use href="#bottom-right-petal"
+       fill="none"
+       stroke="url(#petal-grad-bottom-right)"
+       stroke-width="8.0"
+       stroke-linecap="round"
+       stroke-linejoin="round"
+       clip-path="url(#bottom-right-inset-clip)"/>
+
+  </g>
+  <path d="m 249.90625,103.87891 c 0,-8.37891 4.96289,-13.341801 12.31055,-13.341801 7.34765,0 11.73047,4.833985 11.73047,12.955081 V 145 h 22.49414 V 99.109375 c 0,-16.306641 -9.86133,-27.070313 -24.94336,-27.070313 -11.66602,0 -18.75586,6.445313 -22.5586,16.435547 L 248.55273,72.941406 H 227.41211 V 145 h 22.49414 z m 89.93945,42.47461 c 17.4668,0 29.26172,-7.92774 32.8711,-20.43164 l -20.04493,-3.28711 c -1.80468,4.83398 -6.38085,7.4121 -12.43945,7.4121 -8.50781,0 -14.24414,-5.15624 -14.63086,-15.59765 h 48.14649 v -5.67188 c 0,-23.783199 -14.50196,-36.738278 -34.74024,-36.738278 -21.65625,0 -35.51367,14.953125 -35.51367,37.189458 0,23.07421 13.72852,37.125 36.35156,37.125 z m -14.11523,-44.98829 c 0.83789,-7.92773 5.54297,-13.019527 13.4707,-13.019527 7.86328,0 12.31055,4.833984 13.21289,13.019527 z M 419.4082,72.941406 H 406.45312 V 55.796875 h -22.49414 v 17.144531 h -9.53906 v 16.69336 h 9.53906 v 35.320314 c 0,13.72851 8.05664,21.07617 23.33204,21.07617 4.2539,0 9.02343,-0.45117 14.05078,-1.86914 l -2.90039,-16.37109 c -1.22461,0.32226 -4.70508,0.77343 -6.25196,0.77343 -4.06054,0 -5.73633,-1.80468 -5.73633,-5.60742 V 89.634766 h 12.95508 z m 43.46875,0 H 449.92187 V 55.796875 h -22.49414 v 17.144531 h -9.53906 v 16.69336 h 9.53906 v 35.320314 c 0,13.72851 8.05664,21.07617 23.33204,21.07617 4.2539,0 9.02343,-0.45117 14.05078,-1.86914 l -2.90039,-16.37109 c -1.22461,0.32226 -4.70508,0.77343 -6.25196,0.77343 -4.06054,0 -5.73633,-1.80468 -5.73633,-5.60742 V 89.634766 h 12.95508 z m 38.69922,73.412114 c 22.49414,0 36.1582,-14.95313 36.1582,-37.125 0,-22.236333 -13.66406,-37.189458 -36.1582,-37.189458 -22.55859,0 -36.22265,14.953125 -36.22265,37.189458 0,22.17187 13.66406,37.125 36.22265,37.125 z m 0,-17.20899 c -8.63672,0 -13.27734,-8.05664 -13.27734,-20.04492 0,-12.052735 4.64062,-19.851563 13.27734,-19.851563 8.63672,0 13.27735,7.798828 13.27735,19.851563 0,11.98828 -4.64063,20.04492 -13.27735,20.04492 z" transform="translate(-18 -12.44455)" id="netto-word" style="font-weight:800;font-size:132px;font-family:Inter;letter-spacing:-5;fill:#f2f3ee" aria-label="netto"/>
+  <circle cx="536" cy="119.55545" r="10.5" fill="#A6D191"/>
+</svg>

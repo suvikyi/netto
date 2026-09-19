@@ -1405,10 +1405,17 @@ var TabContextMenu = {
       trigger = "menu_open";
     }
 
-    gBrowser.addTabSplitView(tabsToAdd, {
+    const splitview = gBrowser.addTabSplitView(tabsToAdd, {
       insertBefore,
       trigger,
     });
+
+    if (!splitview) {
+      if (newTab) {
+        gBrowser.removeTab(newTab);
+      }
+      return;
+    }
 
     if (newTab) {
       gBrowser.selectedTab = newTab;

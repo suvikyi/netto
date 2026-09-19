@@ -1693,3 +1693,14 @@ reduced-protection-infobar-reload-button = Reload
   .accesskey = R
 reduced-protection-infobar-never-show-button = Don’t show again
   .accesskey = D
+
+netto-workspace-bar =
+  .aria-label = Workspaces
+netto-workspace-default-name = Workspace
+netto-workspace-rename = Rename workspace
+netto-workspace-close = Close workspace
+netto-workspace-rename-title = Rename workspace
+netto-workspace-rename-prompt = Enter a new name for this workspace:
+netto-workspace-close-title = Close workspace
+# $count (number) - The number of tabs in the workspace.
+netto-workspace-close-prompt = Close this workspace and its { $count } tabs?

@@ -299,6 +299,9 @@ export class AsyncTabSwitcher {
       }
     } else if (state == this.STATE_LOADED) {
       this.maybeActivateDocShell(tab);
+      if (this.shouldKeepNettoLayers(tab) && tab !== this.requestedTab) {
+        this.applyNettoTabActivity(tab);
+      }
     }
 
     if (!tab.linkedBrowser.isRemoteBrowser) {
@@ -477,6 +480,9 @@ export class AsyncTabSwitcher {
             this.switchPaintId = this.window.windowUtils.lastTransactionId + 1;
           } else {
             this.noteMakingTabVisibleWithoutLayers();
+            if (this.shouldKeepNettoLayers(showTab)) {
+              this.activateNettoTab(showTab);
+            }
           }
 
           this.tabbrowser._adjustFocusAfterTabSwitch(showTab);
@@ -532,6 +538,7 @@ export class AsyncTabSwitcher {
       () => this.handleEvent({ type: "loadTimeout" }),
       this.TAB_SWITCH_TIMEOUT
     );
+    this.activateNettoTab(this.requestedTab);
     this.setTabState(this.requestedTab, this.STATE_LOADING);
   }
 
@@ -662,7 +669,8 @@ export class AsyncTabSwitcher {
       // composited.
       if (
         state == this.STATE_LOADED &&
-        !this.shouldDeactivateDocShell(tab.linkedBrowser)
+        (!this.shouldDeactivateDocShell(tab.linkedBrowser) ||
+          this.shouldKeepNettoLayers(tab))
       ) {
         continue;
       }
@@ -721,7 +729,7 @@ export class AsyncTabSwitcher {
 
   deactivateCachedBackgroundTabs() {
     for (let tab of this.tabLayerCache) {
-      if (tab !== this.requestedTab) {
+      if (tab !== this.requestedTab && !this.shouldKeepNettoActive(tab)) {
         let browser = tab.linkedBrowser;
         browser.preserveLayers(true);
         browser.docShellIsActive = false;
@@ -744,6 +752,7 @@ export class AsyncTabSwitcher {
       }
 
       let isInLayerCache = this.tabLayerCache.includes(tab);
+      let keepNettoLayers = this.shouldKeepNettoLayers(tab);
 
       if (
         state == this.STATE_LOADED &&
@@ -751,15 +760,18 @@ export class AsyncTabSwitcher {
         tab !== this.lastVisibleTab &&
         tab !== this.loadingTab &&
         tab !== this.requestedTab &&
-        !isInLayerCache
+        !isInLayerCache &&
+        !keepNettoLayers
       ) {
+        tab.linkedBrowser.preserveLayers(false);
         this.setTabState(tab, this.STATE_UNLOADING);
       }
 
       if (
         state != this.STATE_UNLOADED &&
         tab !== this.requestedTab &&
-        !isInLayerCache
+        !isInLayerCache &&
+        !keepNettoLayers
       ) {
         numPending++;
       }
@@ -797,6 +809,11 @@ export class AsyncTabSwitcher {
     this.setTabState(tab, this.STATE_LOADED);
     this.unwarmTab(tab);
 
+    if (tab !== this.requestedTab && this.shouldKeepNettoLayers(tab)) {
+      browser.preserveLayers(true);
+      this.applyNettoTabActivity(tab);
+    }
+
     if (this.loadingTab === tab) {
       this.maybeClearLoadTimer("onLayersReady");
     }
@@ -822,10 +839,14 @@ export class AsyncTabSwitcher {
       return;
     }
     this.logState(`onLayersCleared(${tab.index})`);
-    this.assert(
-      this.getTabState(tab) == this.STATE_UNLOADING ||
-        this.getTabState(tab) == this.STATE_UNLOADED
-    );
+    let state = this.getTabState(tab);
+    if (state != this.STATE_UNLOADING && state != this.STATE_UNLOADED) {
+      this.setTabStateNoAction(tab, this.STATE_UNLOADED);
+      if (this.shouldKeepNettoLayers(tab) && this.shouldKeepNettoActive(tab)) {
+        this.setTabState(tab, this.STATE_LOADING);
+      }
+      return;
+    }
     this.setTabState(tab, this.STATE_UNLOADED);
   }
 
@@ -935,10 +956,12 @@ export class AsyncTabSwitcher {
    * @returns false if a print preview or PiP browser else true
    */
   shouldDeactivateDocShell(browser) {
+    let tab = this.tabbrowser.getTabForBrowser(browser);
     return !(
       this.tabbrowser._printPreviewBrowsers.has(browser) ||
       this.tabbrowser.splitViewBrowsers.includes(browser) ||
-      lazy.PictureInPicture.isOriginatingBrowser(browser)
+      lazy.PictureInPicture.isOriginatingBrowser(browser) ||
+      (tab && this.shouldKeepNettoActive(tab))
     );
   }
 
@@ -1013,6 +1036,107 @@ export class AsyncTabSwitcher {
     this.queueUnload(lazy.gTabWarmingUnloadDelayMs);
   }
 
+  // Netto asks the switcher to perform browser lifecycle operations so the
+  // native tab state machine remains the single owner of layer state.
+  shouldKeepNettoLayers(tab) {
+    return this.tabbrowser.nettoTabTrack?.shouldKeepLayers(tab) ?? false;
+  }
+
+  shouldKeepNettoActive(tab) {
+    return this.tabbrowser.nettoTabTrack?.shouldKeepActive(tab) ?? false;
+  }
+
+  clearNettoTabLayerPreservation(tab) {
+    tab?.linkedBrowser?.preserveLayers(false);
+  }
+
+  preserveNettoTabLayers(tab) {
+    let browser = tab?.linkedBrowser;
+    if (browser?.hasLayers) {
+      browser.preserveLayers(true);
+    }
+  }
+
+  applyNettoTabActivity(tab) {
+    let browser = tab.linkedBrowser;
+    if (!browser || tab === this.requestedTab) {
+      return;
+    }
+    let keepActive = this.shouldKeepNettoActive(tab);
+    browser.docShellIsActive = keepActive;
+    let remoteTab = browser.frameLoader?.remoteTab;
+    if (remoteTab) {
+      remoteTab.priorityHint = keepActive;
+    }
+  }
+
+  activateNettoTab(tab) {
+    let browser = tab?.linkedBrowser;
+    if (!browser) {
+      return;
+    }
+    this.unwarmTab(tab);
+    browser.preserveLayers(false);
+    browser.docShellIsActive = true;
+    browser.renderLayers = true;
+    let remoteTab = browser.frameLoader?.remoteTab;
+    if (remoteTab) {
+      remoteTab.priorityHint = true;
+    }
+    if (this.getTabState(tab) == this.STATE_LOADING && browser.hasLayers) {
+      this.onLayersReady(browser);
+    }
+  }
+
+  holdNettoTab(tab) {
+    if (
+      this.windowHidden ||
+      tab === this.requestedTab ||
+      !tab?.linkedPanel ||
+      tab.closing ||
+      !tab.linkedBrowser
+    ) {
+      return;
+    }
+
+    let state = this.getTabState(tab);
+    if (state == this.STATE_UNLOADED || state == this.STATE_UNLOADING) {
+      this.warmingTabs.add(tab);
+      this.setTabState(tab, this.STATE_LOADING);
+      if (this.shouldKeepNettoActive(tab)) {
+        this.activateNettoTab(tab);
+      }
+    } else if (state == this.STATE_LOADING) {
+      this.activateNettoTab(tab);
+    } else if (state == this.STATE_LOADED) {
+      tab.linkedBrowser.preserveLayers(true);
+      this.applyNettoTabActivity(tab);
+    }
+  }
+
+  freezeNettoTab(tab) {
+    if (!tab || tab === this.requestedTab) {
+      return;
+    }
+    let browser = tab.linkedBrowser;
+    browser.preserveLayers(true);
+    browser.docShellIsActive = false;
+    let remoteTab = browser.frameLoader?.remoteTab;
+    if (remoteTab) {
+      remoteTab.priorityHint = false;
+    }
+  }
+
+  releaseNettoTab(tab) {
+    if (!tab || tab === this.requestedTab) {
+      return;
+    }
+    this.setTabState(tab, this.STATE_UNLOADING);
+    let browser = tab.linkedBrowser;
+    browser.preserveLayers(false);
+    browser.renderLayers = false;
+  }
+
   cleanUpTabAfterEviction(tab) {
     this.assert(tab !== this.requestedTab);
     let browser = tab.linkedBrowser;
@@ -1023,7 +1147,15 @@ export class AsyncTabSwitcher {
   }
 
   evictOldestTabFromCache() {
-    let tab = this.tabLayerCache.shift();
+    // Netto-owned frozen and live tabs must retain their Firefox compositor
+    // layers even when the native tab cache reaches its limit.
+    let index = this.tabLayerCache.findIndex(
+      tab => !this.shouldKeepNettoLayers(tab)
+    );
+    if (index == -1) {
+      return;
+    }
+    let [tab] = this.tabLayerCache.splice(index, 1);
     this.cleanUpTabAfterEviction(tab);
   }
 

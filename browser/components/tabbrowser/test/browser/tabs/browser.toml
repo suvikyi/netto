@@ -344,6 +344,15 @@ tags = "vertical-tabs"
 
 ["browser_navigate_through_urls_origin_attributes.js"]
 
+["browser_netto_tabtrack.js"]
+tags = "netto"
+
+["browser_netto_betterfox_defaults.js"]
+tags = "netto"
+
+["browser_netto_workspaces.js"]
+tags = "netto"
+
 ["browser_new_file_whitelisted_http_tab.js"]
 https_first_disabled = true
 support-files = [
@@ -472,6 +481,9 @@ tags = "vertical-tabs"
 
 ["browser_replacewithwindow_splitview.js"]
 
+skip-if = [
+  "true", # Netto is mutually exclusive with native Split View: the track vetoes creation while active.
+]
 ["browser_restore_isAppTab.js"]
 run-if = [
   "crashreporter", # test requires crashreporter due to 1536221
@@ -488,6 +500,9 @@ skip-if = [
 
 ["browser_selectTabAtIndex.js"]
 tags = "vertical-tabs"
+skip-if = [
+  "os == 'linux'", # Netto takes Alt+number for workspaces on Linux, replacing native tab-index selection.
+]
 
 ["browser_standalonePinnedTab.js"]
 # Unclear why this fails with vertical tabs
@@ -497,6 +512,9 @@ tags = "vertical-tabs"
 
 ["browser_switch_by_scrolling.js"]
 tags = "vertical-tabs"
+skip-if = [
+  "true", # Netto hides the native tab strip, so wheel-over-tabbar switching has no target.
+]
 
 ["browser_switchtab_when_minimized.js"]
 
@@ -659,8 +677,12 @@ skip-if = [
 
 ["browser_tab_splitview.js"]
 
+skip-if = [
+  "true", # Netto is mutually exclusive with native Split View: the track vetoes creation while active.
+]
 ["browser_tab_splitview_about_opentabs.js"]
 skip-if = [
+  "true", # Netto is mutually exclusive with native Split View: the track vetoes creation while active.
   "os == 'linux' && os_version == '24.04' && arch == 'x86_64' && display == 'x11' && opt && a11y_checks", # Bug 2014213
   "os == 'mac' && os_version == '15.30' && arch == 'aarch64'", # Bug 2019466
 ]
@@ -668,29 +690,57 @@ skip-if = [
 
 ["browser_tab_splitview_alt_click.js"]
 
+skip-if = [
+  "true", # Netto is mutually exclusive with native Split View: the track vetoes creation while active.
+]
 ["browser_tab_splitview_contextmenu.js"]
 skip-if = [
+  "true", # Netto is mutually exclusive with native Split View: the track vetoes creation while active.
   "os == 'mac' && os_version == '10.15' && arch == 'x86_64'", # Bug 1994508
   "os == 'mac' && os_version == '15.30' && arch == 'aarch64'", # Bug 2023967
 ]
 
 ["browser_tab_splitview_findbar.js"]
 
+skip-if = [
+  "true", # Netto is mutually exclusive with native Split View: the track vetoes creation while active.
+]
 ["browser_tab_splitview_footer.js"]
+skip-if = [
+  "true", # Netto is mutually exclusive with native Split View: the track vetoes creation while active.
+]
 support-files = ["file_withicon.html"]
 
 ["browser_tab_splitview_keyboard_focus.js"]
 
+skip-if = [
+  "true", # Netto is mutually exclusive with native Split View: the track vetoes creation while active.
+]
 ["browser_tab_splitview_resize.js"]
 
+skip-if = [
+  "true", # Netto is mutually exclusive with native Split View: the track vetoes creation while active.
+]
 ["browser_tab_splitview_splitter_keyboard.js"]
 
+skip-if = [
+  "true", # Netto is mutually exclusive with native Split View: the track vetoes creation while active.
+]
 ["browser_tab_splitview_splitter_keyboard_boundary.js"]
 
+skip-if = [
+  "true", # Netto is mutually exclusive with native Split View: the track vetoes creation while active.
+]
 ["browser_tab_splitview_tab_order.js"]
 
+skip-if = [
+  "true", # Netto is mutually exclusive with native Split View: the track vetoes creation while active.
+]
 ["browser_tab_splitview_telemetry.js"]
 
+skip-if = [
+  "true", # Netto is mutually exclusive with native Split View: the track vetoes creation while active.
+]
 ["browser_tab_tooltips.js"]
 tags = "vertical-tabs"
 skip-if = [

@@ -44,6 +44,7 @@ category browser-window-domcontentloaded resource:///modules/BrowserWindowTracke
 category browser-window-domcontentloaded moz-src:///browser/components/customizableui/CustomizableUI.sys.mjs CustomizableUI.handleNewBrowserWindow
 category browser-window-domcontentloaded chrome://browser/content/browser-addons.js gUnifiedExtensions.init
 category browser-window-domcontentloaded chrome://browser/content/browser.js FirefoxViewHandler.init
+category browser-window-domcontentloaded moz-src:///browser/components/tabbrowser/NettoBrowserIntegration.sys.mjs NettoBrowserIntegration.init
 
 category browser-window-load-before-sessionstore-init chrome://browser/content/browser-captivePortal.js CaptivePortalWatcher.init
 category browser-window-load-before-sessionstore-init resource:///modules/ZoomUI.sys.mjs ZoomUI.init
@@ -127,6 +128,7 @@ category browser-window-unload chrome://browser/content/browser.js#Win10TabletMo
 category browser-window-unload chrome://browser/content/browser.js#CombinedStopReload CombinedStopReload.uninit
 category browser-window-unload chrome://browser/content/browser-addons.js#gUnifiedExtensions gUnifiedExtensions.uninit
 category browser-window-unload chrome://browser/content/browser.js#FirefoxViewHandler FirefoxViewHandler.uninit
+category browser-window-unload moz-src:///browser/components/tabbrowser/NettoBrowserIntegration.sys.mjs NettoBrowserIntegration.destroy
 category browser-window-unload moz-src:///browser/components/tabbrowser/NewTabPagePreloading.sys.mjs NewTabPagePreloading.removePreloadedBrowser
 category browser-window-unload chrome://browser/content/browser-fullScreenAndPointerLock.js FullScreen.uninit
 category browser-window-unload chrome://browser/content/browser-addons.js#gExtensionsNotifications gExtensionsNotifications.uninit

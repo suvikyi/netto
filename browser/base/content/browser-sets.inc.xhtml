@@ -88,6 +88,7 @@
     <command id="Browser:NextTab" />
     <command id="Browser:PrevTab" />
     <command id="Browser:ShowAllTabs" />
+#include netto-commandset.inc.xhtml
     <command id="Browser:AddTabSplitView" />
     <command id="Browser:SeparateTabSplitView" />
     <command id="cmd_fullZoomReduce" />
@@ -222,8 +223,8 @@
     <key keycode="VK_BACK" command="cmd_handleBackspace" reserved="false"/>
     <key keycode="VK_BACK" command="cmd_handleShiftBackspace" modifiers="shift" reserved="false"/>
 #ifndef XP_MACOSX
-    <key id="goBackKb"  keycode="VK_LEFT" command="Browser:Back" modifiers="alt"/>
-    <key id="goForwardKb"  keycode="VK_RIGHT" command="Browser:Forward" modifiers="alt"/>
+    <key id="goBackKb"  keycode="VK_LEFT" command="Browser:Back" modifiers="alt" disabled="true"/>
+    <key id="goForwardKb"  keycode="VK_RIGHT" command="Browser:Forward" modifiers="alt" disabled="true"/>
 #else
     <key id="goBackKb" keycode="VK_LEFT" command="Browser:Back" modifiers="accel" />
     <key id="goForwardKb" keycode="VK_RIGHT" command="Browser:Forward" modifiers="accel" />
@@ -377,11 +378,7 @@
     <key id="key_separateTabSplitView" command="Browser:SeparateTabSplitView"/>
     <key id="key_duplicateTab" command="Browser:DuplicateTab"/>
 
-#ifdef XP_GNOME
-#define NUM_SELECT_TAB_MODIFIER alt
-#else
 #define NUM_SELECT_TAB_MODIFIER accel
-#endif
 
 #expand    <key id="key_selectTab1" key="1" modifiers="__NUM_SELECT_TAB_MODIFIER__"/>
 #expand    <key id="key_selectTab2" key="2" modifiers="__NUM_SELECT_TAB_MODIFIER__"/>
@@ -392,6 +389,8 @@
 #expand    <key id="key_selectTab7" key="7" modifiers="__NUM_SELECT_TAB_MODIFIER__"/>
 #expand    <key id="key_selectTab8" key="8" modifiers="__NUM_SELECT_TAB_MODIFIER__"/>
 #expand    <key id="key_selectLastTab" key="9" modifiers="__NUM_SELECT_TAB_MODIFIER__"/>
+
+#include netto-keyset.inc.xhtml
 
 #ifdef NIGHTLY_BUILD
     <key id="key_windowRecordingCmd"
